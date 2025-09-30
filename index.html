@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md my-8 mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-center">貸款試算</h1>
+        
+        <div class="mb-4">
+            <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">貸款總金額:</label>
+            <input type="number" id="amount" placeholder="請輸入貸款總金額" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4">
+            <label for="interest" class="block text-gray-700 text-sm font-bold mb-2">年利率 (%):</label>
+            <input type="number" id="interest" placeholder="請輸入年利率" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-6">
+            <label for="periods" class="block text-gray-700 text-sm font-bold mb-2">期數 (月):</label>
+            <input type="number" id="periods" placeholder="請輸入期數 (月)" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="text-lg font-bold mb-2">提前還款</h3>
+            <div class="flex items-center">
+                <input type="number" id="repayment-period" placeholder="期數" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2">
+                <input type="number" id="repayment-amount" placeholder="金額" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2">
+                <button id="add-repayment" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm whitespace-nowrap">新增</button>
+            </div>
+            <ul id="repayment-list" class="mt-4"></ul>
+        </div>
+        
+        <button id="calculate" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">計算</button>
+        
+        <div id="result" class="mt-6"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
