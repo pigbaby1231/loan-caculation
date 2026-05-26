@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const earlyRepayments = [];
+    let currentAmortization = [];
 
     const amountInput = document.getElementById('amount');
     const interestInput = document.getElementById('interest');
@@ -11,6 +12,40 @@ document.addEventListener('DOMContentLoaded', function () {
     const repaymentAmountInput = document.getElementById('repayment-amount');
     const addRepaymentButton = document.getElementById('add-repayment');
     const repaymentList = document.getElementById('repayment-list');
+
+    const modal = document.getElementById('amortization-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalTableBody = document.getElementById('modal-table-body');
+
+    closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+    function openAmortizationModal() {
+        const currentPeriod = earlyRepayments.length > 0
+            ? earlyRepayments[earlyRepayments.length - 1].period
+            : null;
+
+        modalTableBody.innerHTML = '';
+        let highlightedRow = null;
+        currentAmortization.forEach(row => {
+            const tr = document.createElement('tr');
+            const isCurrentPeriod = row.period === currentPeriod;
+            tr.className = `border-b ${isCurrentPeriod ? 'bg-yellow-200' : 'hover:bg-gray-50'}`;
+            tr.innerHTML = `
+                <td class="py-2 px-3 text-center border border-gray-200">${row.period}</td>
+                <td class="py-2 px-3 text-right border border-gray-200">${Math.floor(row.monthlyPayment).toLocaleString()}</td>
+                <td class="py-2 px-3 text-right border border-gray-200">${Math.floor(row.principalPayment).toLocaleString()}</td>
+                <td class="py-2 px-3 text-right border border-gray-200">${Math.floor(row.interestPayment).toLocaleString()}</td>
+                <td class="py-2 px-3 text-right border border-gray-200">${Math.floor(row.remainingBalance).toLocaleString()}</td>
+            `;
+            modalTableBody.appendChild(tr);
+            if (isCurrentPeriod) highlightedRow = tr;
+        });
+        modal.classList.remove('hidden');
+        if (highlightedRow) {
+            setTimeout(() => highlightedRow.scrollIntoView({ block: 'center' }), 50);
+        }
+    }
 
     addRepaymentButton.addEventListener('click', function () {
         const period = parseInt(repaymentPeriodInput.value);
@@ -117,22 +152,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const initialMonthlyPayment = Math.floor(monthlyPayment);
         const finalTotalPayment = Math.floor(totalPayment);
         const finalTotalInterest = Math.floor(totalInterest);
+        const latestMonthlyPayment = Math.floor(amortization[amortization.length - 1].monthlyPayment);
+
+        currentAmortization = amortization;
 
         let resultHTML = `
             <h2 class="text-xl font-bold mb-4">計算結果</h2>
             <div class="grid grid-cols-3 gap-4 text-center">
                 <div>
                     <p class="text-gray-600">初始月付金</p>
-                    <p class="text-2xl font-bold">${initialMonthlyPayment}</p>
+                    <p class="text-2xl font-bold">${initialMonthlyPayment.toLocaleString()}</p>
                 </div>
                 <div>
                     <p class="text-gray-600">總付款金額</p>
-                    <p class="text-2xl font-bold">${finalTotalPayment}</p>
+                    <p class="text-2xl font-bold">${finalTotalPayment.toLocaleString()}</p>
                 </div>
                 <div>
                     <p class="text-gray-600">總利息</p>
-                    <p class="text-2xl font-bold">${finalTotalInterest}</p>
+                    <p class="text-2xl font-bold">${finalTotalInterest.toLocaleString()}</p>
                 </div>
+            </div>
+            <div class="mt-4 p-3 bg-blue-50 rounded-lg text-center">
+                <p class="text-gray-600 text-sm mb-1">最新月付金</p>
+                <button id="open-amortization-modal" class="text-2xl font-bold text-blue-600 underline hover:text-blue-800 cursor-pointer bg-transparent border-none p-0">${latestMonthlyPayment.toLocaleString()}</button>
+                <p class="text-xs text-gray-400 mt-1">點擊查看剩餘明細</p>
             </div>
         `;
 
@@ -148,5 +191,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         resultDiv.innerHTML = resultHTML;
+        document.getElementById('open-amortization-modal').addEventListener('click', openAmortizationModal);
     });
 });
